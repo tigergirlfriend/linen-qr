@@ -1,96 +1,61 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
 import { QRCodeCanvas } from "qrcode.react";
-import { supabase } from "@/lib/supabase";
 
 export default function AdminPage() {
-  const [sku, setSku] = useState("");
-  const [name, setName] = useState("");
-  const [savedSku, setSavedSku] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
+  const [linens, setLinens] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSaving(true);
-    
-    // ส่งข้อมูลไปบันทึกในตาราง linens ของ Supabase
-    const { error } = await supabase
-      .from("linens")
-      .insert([{ id: sku, name: name }]);
+  // ดึง URL อัตโนมัติ ไม่ว่าจะรันในคอมหรือบน Vercel
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
 
-    if (error) {
-      alert("เกิดข้อผิดพลาด: " + error.message);
-    } else {
-      alert("บันทึกข้อมูลสำเร็จ!");
-      setSavedSku(sku); // ให้ระบบจำรหัสที่เพิ่งบันทึกเพื่อเอาไปสร้าง QR Code
-      setSku(""); // ล้างช่องกรอกรหัส
-      setName(""); // ล้างช่องกรอกชื่อ
+  useEffect(() => {
+    async function fetchLinens() {
+      const { data, error } = await supabase.from("linens").select("*").order("id", { ascending: true });
+      if (data) setLinens(data);
+      setLoading(false);
     }
-    setIsSaving(false);
+    fetchLinens();
+  }, []);
+
+  const downloadQR = (id: string) => {
+    const canvas = document.getElementById(`qr-${id}`) as HTMLCanvasElement;
+    if (!canvas) return;
+    const pngUrl = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+    const downloadLink = document.createElement("a");
+    downloadLink.href = pngUrl;
+    downloadLink.download = `${id}_QRCode.png`;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
   };
 
-  // URL ปลายทางที่ซ่อนอยู่ใน QR Code (เมื่อสแกนแล้วจะวิ่งไปหน้านี้)
-  const qrUrl = `https://linen-qr-vvaf.vercel.app${savedSku}`;
+  if (loading) return <div className="p-10 text-center font-bold text-gray-500">กำลังโหลดข้อมูลคลังผ้า...</div>;
 
   return (
-    <div className="p-8 font-sans max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">ระบบเพิ่มรายการผ้า (Admin)</h1>
-      
-      <div className="flex gap-8">
-        {/* กล่องซ้าย: ฟอร์มกรอกข้อมูล */}
-        <div className="w-1/2 bg-white p-6 rounded-lg shadow-md border">
-          <form onSubmit={handleSave} className="flex flex-col gap-4">
-            <div>
-              <label className="block mb-1 font-semibold text-gray-700">รหัสสินค้า</label>
-              <input
-                type="text"
-                placeholder="เช่น FB-9595-CR"
-                value={sku}
-                onChange={(e) => setSku(e.target.value)}
-                required
-                className="border p-2 rounded w-full outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block mb-1 font-semibold text-gray-700">ชื่อ/รายละเอียดผ้า</label>
-              <input
-                type="text"
-                placeholder="เช่น ผ้า 95x95 สีครีม"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="border p-2 rounded w-full outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
+    <div className="p-8 bg-gray-50 min-h-screen font-sans pb-20">
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">ระบบสร้าง QR Code (Admin)</h1>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        {linens.map((linen) => (
+          <div key={linen.id} className="bg-white p-4 rounded-xl shadow border flex flex-col items-center">
+            <QRCodeCanvas 
+              id={`qr-${linen.id}`}
+              value={`${baseUrl}/linen/${linen.id}`} 
+              size={120} 
+              level="H"
+            />
+            <p className="mt-4 font-bold text-gray-800 text-sm">{linen.id}</p>
+            <p className="text-xs text-gray-500 mb-4 truncate w-full text-center">{linen.name}</p>
             <button 
-              type="submit" 
-              disabled={isSaving}
-              className="bg-blue-600 text-white p-2 rounded mt-2 hover:bg-blue-700 disabled:bg-gray-400"
+              onClick={() => downloadQR(linen.id)}
+              className="bg-blue-600 text-white text-xs px-3 py-2 rounded-lg hover:bg-blue-700 w-full transition"
             >
-              {isSaving ? "กำลังบันทึก..." : "บันทึกข้อมูล"}
-            </button>
-          </form>
-        </div>
-
-        {/* กล่องขวา: แสดง QR Code เมื่อบันทึกสำเร็จ */}
-        {savedSku && (
-          <div className="w-1/2 flex flex-col items-center justify-center bg-gray-50 p-6 rounded-lg border-2 border-dashed border-gray-300">
-            <h2 className="text-lg font-bold mb-4 text-green-600">✅ สร้าง QR Code สำเร็จ!</h2>
-            
-            <div id="print-area" className="bg-white p-4 flex flex-col items-center border rounded shadow-sm">
-              <QRCodeCanvas value={qrUrl} size={150} level={"H"} />
-              <p className="mt-2 font-bold text-lg text-gray-800">{savedSku}</p>
-            </div>
-            
-            <button
-              onClick={() => window.print()}
-              className="mt-6 bg-green-500 text-white px-6 py-2 rounded-full font-bold shadow hover:bg-green-600"
-            >
-              🖨️ ปริ้นท์สติ๊กเกอร์
+              ดาวน์โหลด QR
             </button>
           </div>
-        )}
+        ))}
       </div>
     </div>
   );
