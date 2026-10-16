@@ -31,7 +31,7 @@ export default function AdminPage() {
   };
 
   // URL ปลายทางที่ซ่อนอยู่ใน QR Code (เมื่อสแกนแล้วจะวิ่งไปหน้านี้)
-  const qrUrl = `http://localhost:3000/linen/${savedSku}`;
+  const qrUrl = `https://linen-qr-vvaf.vercel.app${savedSku}`;
 
   return (
     <div className="p-8 font-sans max-w-4xl mx-auto">
