@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 export default function AdminPage() {
   const [sku, setSku] = useState("");
