@@ -1,0 +1,95 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { supabase } from "../../../lib/supabase";
+
+export default function LinenDetailPage() {
+  const params = useParams();
+  const id = params.id as string; // ดึงรหัสผ้ามาจาก URL
+  
+  const [linen, setLinen] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // ฟังก์ชันไปค้นหาข้อมูลจาก Supabase ตามรหัสที่สแกนมา
+    async function fetchLinen() {
+      const { data, error } = await supabase
+        .from("linens")
+        .select("*")
+        .eq("id", id)
+        .single(); // ดึงมาแค่รายการเดียวที่รหัสตรงกัน
+      
+      if (data) {
+        setLinen(data);
+      }
+      setLoading(false);
+    }
+    
+    if (id) {
+      fetchLinen();
+    }
+  }, [id]);
+
+  // หน้าจอตอนกำลังโหลด
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center font-bold text-gray-500">กำลังโหลดข้อมูล...</div>;
+  }
+
+  // หน้าจอตอนหารหัสไม่เจอ
+  if (!linen) {
+    return <div className="min-h-screen flex items-center justify-center font-bold text-red-500 text-xl">❌ ไม่พบข้อมูลรหัสสินค้านี้</div>;
+  }
+
+  // หน้าจอแสดงผลข้อมูลจริง (ออกแบบมาเพื่อมือถือ)
+  return (
+    <div className="min-h-screen bg-gray-100 p-4 font-sans pb-10">
+      <div className="max-w-md mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
+        
+        {/* ส่วนแสดงรูปภาพ Mockup */}
+        <div className="bg-gray-200 w-full h-64 flex items-center justify-center relative">
+          {linen.mockup_img ? (
+            <img 
+              src={linen.mockup_img} 
+              alt={linen.name} 
+              className="w-full h-full object-contain bg-white"
+            />
+          ) : (
+            <span className="text-gray-400 font-semibold">ไม่มีรูปภาพ Mockup</span>
+          )}
+        </div>
+
+        {/* ส่วนแสดงรายละเอียดข้อมูล */}
+        <div className="p-6">
+          <div className="mb-4">
+            <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">
+              รหัส: {linen.id}
+            </span>
+          </div>
+          
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">{linen.name}</h1>
+          
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <div className="bg-gray-50 p-3 rounded-lg border">
+              <p className="text-sm text-gray-500 mb-1">ขนาด</p>
+              <p className="font-semibold text-gray-800">{linen.size || "-"}</p>
+            </div>
+            <div className="bg-gray-50 p-3 rounded-lg border">
+              <p className="text-sm text-gray-500 mb-1">บรรจุ (ต่อห่อ)</p>
+              <p className="font-semibold text-gray-800">{linen.qty_per_pack || "-"} ชิ้น</p>
+            </div>
+            <div className="bg-gray-50 p-3 rounded-lg border">
+              <p className="text-sm text-gray-500 mb-1">ซื้อเข้า</p>
+              <p className="font-semibold text-gray-800">{linen.stock_in || 0}</p>
+            </div>
+            <div className="bg-gray-50 p-3 rounded-lg border">
+              <p className="text-sm text-gray-500 mb-1">ตรวจนับประจำปี</p>
+              <p className="font-bold text-green-600 text-lg">{linen.stock_remain || 0}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
