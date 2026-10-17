@@ -4,17 +4,15 @@ import { useEffect, useState, Suspense } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 
-// 1. นำเข้า Font จาก next/font/google
+// นำเข้า Font
 import { Noto_Sans_Thai, Sarabun } from "next/font/google";
 
-// 2. ตั้งค่า Noto Sans Thai สำหรับส่วน Header
 const notoSansThai = Noto_Sans_Thai({
   weight: ["400", "700"],
   subsets: ["thai", "latin"],
   display: "swap",
 });
 
-// 3. ตั้งค่า Sarabun สำหรับส่วน Body
 const sarabun = Sarabun({
   weight: ["400", "600", "700"],
   subsets: ["thai", "latin"],
@@ -48,80 +46,116 @@ function LinenDetailContent() {
   }, [id]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center font-bold text-gray-500">กำลังโหลดข้อมูล...</div>;
+    return <div className={`min-h-screen bg-[#F2F5F9] flex items-center justify-center font-bold text-[#5B6B84] ${sarabun.className}`}>กำลังโหลดข้อมูล...</div>;
   }
 
   if (!linen) {
-    return <div className="min-h-screen flex items-center justify-center font-bold text-red-500 text-xl">❌ ไม่พบข้อมูลรหัสสินค้านี้</div>;
+    return <div className={`min-h-screen bg-[#F2F5F9] flex items-center justify-center font-bold text-red-500 text-xl ${sarabun.className}`}>❌ ไม่พบข้อมูลรหัสสินค้านี้</div>;
   }
 
   return (
-    // 4. แก้ไขคลาสฟอนต์ของ Body โดยลบ font-sans ออก และใส่ className ของ Sarabun เข้าไปแทน
-    <div className={`min-h-screen bg-gray-100 p-4 pb-10 ${sarabun.className}`}>
-      <div className="max-w-md mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div className="bg-gray-200 w-full h-64 flex items-center justify-center relative">
-          {linen.mockup_img ? (
-            <img 
-              src={linen.mockup_img} 
-              alt={linen.name} 
-              className="w-full h-full object-contain bg-white"
-            />
-          ) : (
-            <span className="text-gray-400 font-semibold">ไม่มีรูปภาพ Mockup</span>
-          )}
-        </div>
-        <div className="p-6">
-          <div className="mb-4">
-            {/* 5. ใส่ truncate ให้รหัสสินค้า เผื่อรหัสยาวเกินกรอบ และใส่ title เพื่อให้อ่านข้อมูลเต็มได้เมื่อนำเมาส์ไปชี้ */}
-            <span 
-              className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded inline-block max-w-full truncate"
-              title={`รหัส: ${linen.id}`}
-            >
-              รหัส: {linen.id}
-            </span>
+    // 1. [พื้นหลังหน้า] ใช้สี #F2F5F9 และเพิ่ม pb-24 เผื่อพื้นที่ให้ปุ่มด้านล่าง
+    <div className={`min-h-screen bg-[#F2F5F9] pb-24 ${sarabun.className}`}>
+      
+      {/* 2. [ส่วนหัว] พื้นสีน้ำเงิน #12294D ตาม Ref */}
+      <div className="bg-[#12294D] w-full pt-8 pb-8 px-4">
+        <div className="max-w-md mx-auto">
+          <div className="flex justify-between items-center text-[#FFFFFF] mb-4 text-sm">
+            <span>Linen-QR</span>
+            <span className="text-gray-300">อัปเดตล่าสุด</span>
           </div>
           
-          {/* 6. เปลี่ยนฟอนต์ Header เป็น Noto Sans Thai, เพิ่ม truncate ตัดคำยาวๆ ไม่ให้เลย์เอาต์พัง และใส่ title */}
-          <h1 
-            className={`text-2xl font-bold text-gray-800 mb-2 line-clamp-3 ${notoSansThai.className}`}
-            title={linen.name}
-          >
+          {/* 3. [ป้ายรหัสสินค้า] สีพื้นส้ม #F26B1D, ตัวอักษรบนพื้นส้ม #12294D */}
+          <span className="bg-[#F26B1D] text-[#12294D] text-sm font-bold px-3 py-1 rounded-md inline-block mb-3">
+            {linen.id}
+          </span>
+          
+          {/* 4. [ชื่อสินค้า] ตัวอักษรบนพื้นน้ำเงิน #FFFFFF และฟอนต์ Header Noto Sans Thai */}
+          <h1 className={`text-2xl font-bold text-[#FFFFFF] mb-2 line-clamp-2 ${notoSansThai.className}`}>
             {linen.name}
           </h1>
+          <p className="text-gray-300 text-sm">
+            {linen.size ? `ขนาด ${linen.size}` : "ไม่ระบุขนาด"} • {linen.qty_per_pack || "-"} ชิ้น/ห่อ
+          </p>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-2 gap-4 mt-6">
-            <div className="bg-gray-50 p-3 rounded-lg border">
-              <p className="text-sm text-gray-500 mb-1">ขนาด</p>
-              {/* 7. ใส่ truncate สำหรับขนาดเผื่อชื่อขนาดยาวเกินไป */}
-              <p className="font-semibold text-gray-800 mb-2 line-clamp-3" title={linen.size || "-"}>
-                {linen.size || "-"}
-              </p>
-            </div>
-            <div className="bg-gray-50 p-3 rounded-lg border">
-              <p className="text-sm text-gray-500 mb-2 line-clamp-3">บรรจุ (ต่อห่อ)</p>
-              <p className="font-semibold text-gray-800 mb-2 line-clamp-3" title={`${linen.qty_per_pack || "-"} ชิ้น`}>
-                {linen.qty_per_pack || "-"} ชิ้น
-              </p>
-            </div>
-            <div className="bg-gray-50 p-3 rounded-lg border">
-              <p className="text-sm text-gray-500 mb-1">สต๊อกรับเข้า</p>
-              <p className="font-semibold text-gray-800">{linen.stock_in || 0}</p>
-            </div>
-            <div className="bg-gray-50 p-3 rounded-lg border">
-              <p className="text-sm text-gray-500 mb-1">สต๊อกคงเหลือ</p>
-              <p className="font-bold text-green-600 text-lg">{linen.stock_remain || 0}</p>
+      {/* Container สำหรับเนื้อหาการ์ดต่างๆ */}
+      <div className="max-w-md mx-auto p-4 space-y-4 -mt-2">
+        
+        {/* 5. [Card: ภาพ Mockup] พื้นการ์ด #FFFFFF, เส้นแบ่ง #D9E0EA */}
+        <div className="bg-[#FFFFFF] p-5 rounded-xl border border-[#D9E0EA] shadow-sm">
+          {/* หัวข้อสีน้ำเงิน #12294D, เส้นข้างสีส้ม #F26B1D */}
+          <h2 className={`text-lg font-bold text-[#12294D] border-l-4 border-[#F26B1D] pl-3 mb-4 ${notoSansThai.className}`}>
+            ภาพ Mockup
+          </h2>
+          <div className="bg-[#F2F5F9] w-full h-48 flex items-center justify-center rounded-lg border border-[#D9E0EA] overflow-hidden p-2">
+            {linen.mockup_img ? (
+              <img 
+                src={linen.mockup_img} 
+                alt={linen.name} 
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              // ข้อความรอง #5B6B84
+              <span className="text-[#5B6B84] font-semibold text-sm">ไม่มีรูปภาพ Mockup</span>
+            )}
+          </div>
+        </div>
+
+        {/* 6. [Card: ยอดที่ซื้อเข้า] */}
+        <div className="bg-[#FFFFFF] p-5 rounded-xl border border-[#D9E0EA] shadow-sm">
+          <h2 className={`text-lg font-bold text-[#12294D] border-l-4 border-[#F26B1D] pl-3 mb-4 ${notoSansThai.className}`}>
+            ยอดที่ซื้อเข้า
+          </h2>
+          <div className="flex items-baseline gap-2 mb-4">
+            {/* ตัวเลขยอดซื้อเข้าสีน้ำเงิน #12294D */}
+            <span className="text-5xl font-bold text-[#12294D]">{linen.stock_in || 0}</span>
+            <span className="text-[#5B6B84] text-sm">ชิ้น</span>
+          </div>
+          {/* เส้นแบ่ง #D9E0EA */}
+          <div className="border-t border-[#D9E0EA] pt-4 flex justify-between items-center text-sm">
+            <span className="text-[#5B6B84]">สต๊อกคงเหลือตามระบบ</span>
+            {/* ข้อความหลัก #16233B */}
+            <span className="text-[#16233B] font-bold text-lg">{linen.stock_remain || 0} ชิ้น</span>
+          </div>
+        </div>
+
+        {/* 7. [Card: โซนที่วาง] */}
+        <div className="bg-[#FFFFFF] p-5 rounded-xl border border-[#D9E0EA] shadow-sm">
+          <h2 className={`text-lg font-bold text-[#12294D] border-l-4 border-[#F26B1D] pl-3 mb-4 ${notoSansThai.className}`}>
+            โซนที่วาง
+          </h2>
+          {/* พื้นการ์ดโซนที่วางสีส้มอ่อน #FFE9DA */}
+          <div className="bg-[#FFE9DA] rounded-xl p-4 flex items-center gap-5">
+            {/* ตัวอักษรรหัสโซนสีส้มเข้ม #B84A06 */}
+            <span className="text-4xl font-bold text-[#B84A06]">{linen.zone || "A3"}</span>
+            <div className="flex flex-col">
+              <span className="text-[#16233B] font-bold text-sm">คลัง A • ชั้น 3 • ช่อง 12</span>
+              <span className="text-[#5B6B84] text-xs mt-1">{linen.name}</span>
             </div>
           </div>
         </div>
+
       </div>
+
+      {/* 8. [ปุ่ม Fixed ด้านล่าง] ไปที่ระบบเบิกจ่ายผ้า */}
+      <div className="fixed bottom-0 left-0 w-full bg-[#FFFFFF] p-4 border-t border-[#D9E0EA] z-10">
+        <div className="max-w-md mx-auto">
+          {/* พื้นปุ่มสีน้ำเงิน #12294D, ตัวอักษรบนพื้นน้ำเงิน #FFFFFF */}
+          <button className="w-full bg-[#12294D] text-[#FFFFFF] font-bold py-3.5 rounded-xl hover:bg-opacity-90 transition shadow-md text-sm sm:text-base">
+            ไปที่ระบบเบิกจ่ายผ้า
+          </button>
+        </div>
+      </div>
+
     </div>
   );
 }
 
 export default function LinenDetailPage() {
   return (
-    // 8. ใช้ Sarabun ครอบส่วน Suspense ด้วยเพื่อให้ตอนกำลังโหลดก็ใช้ฟอนต์เดียวกัน
-    <Suspense fallback={<div className={`min-h-screen flex items-center justify-center font-bold text-gray-500 ${sarabun.className}`}>กำลังเตรียมหน้าเว็บ...</div>}>
+    <Suspense fallback={<div className={`min-h-screen bg-[#F2F5F9] flex items-center justify-center font-bold text-[#5B6B84] ${sarabun.className}`}>กำลังเตรียมหน้าเว็บ...</div>}>
       <LinenDetailContent />
     </Suspense>
   );
