@@ -4,7 +4,7 @@ import "./globals.css";
 
 // 2. [อัปเดต] เปลี่ยน Title ให้ตรงกับโปรเจกต์
 export const metadata: Metadata = {
-  title: "Linen-QR Management",
+  title: "Linen-QR",
   description: "ระบบจัดการคลังผ้าด้วย QR Code",
 };
 

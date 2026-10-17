@@ -4,6 +4,23 @@ import { useEffect, useState, Suspense } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 
+// 1. นำเข้า Font จาก next/font/google
+import { Noto_Sans_Thai, Sarabun } from "next/font/google";
+
+// 2. ตั้งค่า Noto Sans Thai สำหรับส่วน Header
+const notoSansThai = Noto_Sans_Thai({
+  weight: ["400", "700"],
+  subsets: ["thai", "latin"],
+  display: "swap",
+});
+
+// 3. ตั้งค่า Sarabun สำหรับส่วน Body
+const sarabun = Sarabun({
+  weight: ["400", "600", "700"],
+  subsets: ["thai", "latin"],
+  display: "swap",
+});
+
 function LinenDetailContent() {
   const params = useParams();
   const id = params?.id as string;
@@ -39,7 +56,8 @@ function LinenDetailContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 font-sans pb-10">
+    // 4. แก้ไขคลาสฟอนต์ของ Body โดยลบ font-sans ออก และใส่ className ของ Sarabun เข้าไปแทน
+    <div className={`min-h-screen bg-gray-100 p-4 pb-10 ${sarabun.className}`}>
       <div className="max-w-md mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
         <div className="bg-gray-200 w-full h-64 flex items-center justify-center relative">
           {linen.mockup_img ? (
@@ -54,19 +72,36 @@ function LinenDetailContent() {
         </div>
         <div className="p-6">
           <div className="mb-4">
-            <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">
+            {/* 5. ใส่ truncate ให้รหัสสินค้า เผื่อรหัสยาวเกินกรอบ และใส่ title เพื่อให้อ่านข้อมูลเต็มได้เมื่อนำเมาส์ไปชี้ */}
+            <span 
+              className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded inline-block max-w-full truncate"
+              title={`รหัส: ${linen.id}`}
+            >
               รหัส: {linen.id}
             </span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">{linen.name}</h1>
+          
+          {/* 6. เปลี่ยนฟอนต์ Header เป็น Noto Sans Thai, เพิ่ม truncate ตัดคำยาวๆ ไม่ให้เลย์เอาต์พัง และใส่ title */}
+          <h1 
+            className={`text-2xl font-bold text-gray-800 mb-2 truncate ${notoSansThai.className}`}
+            title={linen.name}
+          >
+            {linen.name}
+          </h1>
+
           <div className="grid grid-cols-2 gap-4 mt-6">
             <div className="bg-gray-50 p-3 rounded-lg border">
               <p className="text-sm text-gray-500 mb-1">ขนาด</p>
-              <p className="font-semibold text-gray-800">{linen.size || "-"}</p>
+              {/* 7. ใส่ truncate สำหรับขนาดเผื่อชื่อขนาดยาวเกินไป */}
+              <p className="font-semibold text-gray-800 truncate" title={linen.size || "-"}>
+                {linen.size || "-"}
+              </p>
             </div>
             <div className="bg-gray-50 p-3 rounded-lg border">
-              <p className="text-sm text-gray-500 mb-1">บรรจุ (ต่อห่อ)</p>
-              <p className="font-semibold text-gray-800">{linen.qty_per_pack || "-"} ชิ้น</p>
+              <p className="text-sm text-gray-500 mb-1 truncate">บรรจุ (ต่อห่อ)</p>
+              <p className="font-semibold text-gray-800 truncate" title={`${linen.qty_per_pack || "-"} ชิ้น`}>
+                {linen.qty_per_pack || "-"} ชิ้น
+              </p>
             </div>
             <div className="bg-gray-50 p-3 rounded-lg border">
               <p className="text-sm text-gray-500 mb-1">สต๊อกรับเข้า</p>
@@ -85,7 +120,8 @@ function LinenDetailContent() {
 
 export default function LinenDetailPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-bold text-gray-500">กำลังเตรียมหน้าเว็บ...</div>}>
+    // 8. ใช้ Sarabun ครอบส่วน Suspense ด้วยเพื่อให้ตอนกำลังโหลดก็ใช้ฟอนต์เดียวกัน
+    <Suspense fallback={<div className={`min-h-screen flex items-center justify-center font-bold text-gray-500 ${sarabun.className}`}>กำลังเตรียมหน้าเว็บ...</div>}>
       <LinenDetailContent />
     </Suspense>
   );
