@@ -95,7 +95,7 @@ function LinenDetailContent() {
           <h2 className={`text-lg font-bold text-[#12294D] border-l-4 border-[#F26B1D] pl-3 mb-4 ${notoSansThai.className}`}>
             ภาพ Mockup
           </h2>
-          <div className="bg-[#F2F5F9] w-full h-48 flex items-center justify-center rounded-lg border border-[#D9E0EA] overflow-hidden p-2">
+          <div className="bg-[#FFFFFF] w-full h-48 flex items-center justify-center rounded-lg border border-[#D9E0EA] overflow-hidden p-2">
             {linen.mockup_img ? (
               <img 
                 src={linen.mockup_img} 
