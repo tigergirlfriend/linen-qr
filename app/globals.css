@@ -1,14 +1,36 @@
 @import "tailwindcss";
 
+/* 1. นำเข้าฟอนต์ Noto Sans Thai และ Sarabun จาก Google Fonts 
+   - นำเข้าหลายน้ำหนัก (300, 400, 500, 600, 700) เพื่อรองรับตัวหนา/ตัวบาง 
+   - display=swap ช่วยให้เว็บโหลดข้อความขึ้นมาก่อนแม้ฟอนต์ยังโหลดไม่เสร็จ */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap');
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* 2. ประกาศตัวแปรเก็บชื่อฟอนต์ที่อิมพอร์ตเข้ามา 
+     - ประกาศไว้ใน :root เพื่อให้เรียกใช้ได้ง่ายๆ ทั่วทั้งไฟล์ CSS */
+  --font-noto-sans-thai: 'Noto Sans Thai', sans-serif;
+  --font-sarabun: 'Sarabun', sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  
+  /* 3. เชื่อมตัวแปรฟอนต์เข้ากับ Tailwind Utility Classes
+     - สร้างคลาสใหม่ "font-heading" ให้เรียกใช้ Noto Sans Thai (เช่น className="font-heading text-2xl") */
+  --font-heading: var(--font-noto-sans-thai);
+  
+  /* - สร้างคลาสใหม่ "font-body" ให้เรียกใช้ Sarabun (เผื่อสลับใช้งาน) */
+  --font-body: var(--font-sarabun);
+  
+  /* - แทนที่คลาสพื้นฐาน "font-sans" ของ Tailwind ให้เป็น Sarabun 
+     (หมายความว่าถ้าคุณไม่ใส่คลาสฟอนต์อะไรเลย มันจะเป็น Sarabun ทันที) */
+  --font-sans: var(--font-sarabun);
+  
+  /* ปล่อย font-mono ของเดิมไว้สำหรับส่วนที่เป็นโค้ดหรือตัวเลขตายตัว */
   --font-mono: var(--font-geist-mono);
 }
 
@@ -22,5 +44,9 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  
+  /* 4. เปลี่ยนฟอนต์ค่าเริ่มต้นของทั้งเว็บไซต์ (Global Font) 
+     - เปลี่ยนจาก Arial, Helvetica เป็นตัวแปร --font-sarabun 
+     - ส่งผลให้ข้อความ ข้อมูลเยอะๆ ทั้งหมดในเว็บกลายเป็น Sarabun อัตโนมัติ โดยที่คุณไม่ต้องไปไล่เติม className ให้เหนื่อย */
+  font-family: var(--font-sarabun);
 }
