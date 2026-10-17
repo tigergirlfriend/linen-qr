@@ -56,31 +56,39 @@ function LinenDetailContent() {
   return (
     <div className={`min-h-screen bg-[#F2F5F9] pb-10 ${sarabun.className}`}>
       
-      {/* 1. [แก้ไข] ย้ายสีน้ำเงินเข้ามาอยู่ใน Container หลัก และเพิ่ม rounded-b-3xl เพื่อให้มุมด้านล่างโค้งมนดูนุ่มนวล */}
-      <div className="max-w-md mx-auto bg-[#12294D] pt-8 pb-10 px-6 rounded-b-3xl shadow-md">
-        <div className="flex justify-between items-center text-[#FFFFFF] mb-5 text-sm opacity-90">
-          <span>Linen-QR</span>
-          <span>อัปเดตล่าสุด</span>
+      {/* 1. [แก้ไข] สร้าง Container หลักเพียงอันเดียว เพื่อครอบทั้งการ์ดสีน้ำเงินและการ์ดสีขาว 
+          - ใส่ p-4 เพื่อให้มีระยะห่างจากขอบจอมือถือ
+          - ใส่ space-y-4 เพื่อให้การ์ดทุกใบมีช่องว่างระหว่างกันเท่าๆ กัน 
+          - ใส่ pt-6 เพื่อเว้นระยะจากขอบจอด้านบนให้ดูสวยงาม */}
+      <div className="max-w-md mx-auto p-4 space-y-4 pt-6">
+        
+        {/* 2. [แก้ไข] ปรับกล่องสีน้ำเงินให้เป็น "การ์ด" (Card) 
+            - ใช้ rounded-2xl เพื่อให้มุมโค้งมนทุกด้าน ล้อไปกับการ์ดสีขาวด้านล่าง
+            - ใช้ p-6 เพื่อให้ Padding ภายในกล่องสมดุล */}
+        <div className="bg-[#12294D] p-6 rounded-2xl shadow-md">
+          <div className="flex justify-between items-center text-[#FFFFFF] mb-4 text-sm opacity-90">
+            <span>Linen-QR</span>
+            <span>อัปเดตล่าสุด</span>
+          </div>
+          
+          {/* ป้ายรหัสสินค้า */}
+          <span className="bg-[#F26B1D] text-[#12294D] text-sm font-bold px-3 py-1 rounded-md inline-block mb-3 shadow-sm">
+            {linen.id}
+          </span>
+          
+          {/* ชื่อสินค้า */}
+          <h1 className={`text-2xl font-bold text-[#FFFFFF] mb-2 leading-snug line-clamp-2 ${notoSansThai.className}`}>
+            {linen.name}
+          </h1>
+          
+          {/* รายละเอียด */}
+          <p className="text-gray-300 text-sm">
+            {linen.size ? `ขนาด ${linen.size}` : "ไม่ระบุขนาด"} • {linen.qty_per_pack || "-"} ชิ้น/ห่อ
+          </p>
         </div>
-        
-        {/* ป้ายรหัสสินค้า */}
-        <span className="bg-[#F26B1D] text-[#12294D] text-sm font-bold px-3 py-1 rounded-md inline-block mb-3 shadow-sm">
-          {linen.id}
-        </span>
-        
-        {/* ชื่อสินค้า */}
-        <h1 className={`text-2xl font-bold text-[#FFFFFF] mb-2 leading-snug line-clamp-2 ${notoSansThai.className}`}>
-          {linen.name}
-        </h1>
-        
-        {/* รายละเอียด */}
-        <p className="text-gray-300 text-sm">
-          {linen.size ? `ขนาด ${linen.size}` : "ไม่ระบุขนาด"} • {linen.qty_per_pack || "-"} ชิ้น/ห่อ
-        </p>
-      </div>
 
-      {/* 2. [แก้ไข] ลบ -mt-2 ออก เพื่อให้มีพื้นที่หายใจ (Gap) ระหว่างการ์ดสีน้ำเงินกับเนื้อหาด้านล่าง */}
-      <div className="max-w-md mx-auto p-4 space-y-4 mt-2">
+        {/* 3. [ส่วนการ์ดสีขาว] โค้ดเดิม แต่ลบ Container ภายนอกที่เคยครอบทิ้งไป 
+            เพราะเราจับรวบเข้าไปอยู่ใน Container หลักด้านบนแล้ว */}
         
         {/* Card: ภาพ Mockup */}
         <div className="bg-[#FFFFFF] p-5 rounded-xl border border-[#D9E0EA] shadow-sm">
@@ -129,8 +137,8 @@ function LinenDetailContent() {
           </div>
         </div>
 
-        {/* ปุ่มด้านล่าง */}
-        <div className="pt-4">
+        {/* ปุ่มด้านล่างสุด */}
+        <div className="pt-2">
           <button className="w-full bg-[#12294D] text-[#FFFFFF] font-bold py-3.5 rounded-xl hover:bg-opacity-90 transition shadow-md text-sm sm:text-base">
             ไปที่ระบบเบิกจ่ายผ้า
           </button>
