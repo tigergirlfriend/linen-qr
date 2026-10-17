@@ -54,8 +54,8 @@ function LinenDetailContent() {
   }
 
   return (
-    // 1. [พื้นหลังหน้า] ใช้สี #F2F5F9 และเพิ่ม pb-24 เผื่อพื้นที่ให้ปุ่มด้านล่าง
-    <div className={`min-h-screen bg-[#F2F5F9] pb-24 ${sarabun.className}`}>
+    // 1. [แก้ไข] เปลี่ยน pb-24 เป็น pb-10 เนื่องจากเรานำ Sticky Footer ออกแล้ว จึงไม่จำเป็นต้องเว้นพื้นที่ด้านล่างไว้เยอะ
+    <div className={`min-h-screen bg-[#F2F5F9] pb-10 ${sarabun.className}`}>
       
       {/* 2. [ส่วนหัว] พื้นสีน้ำเงิน #12294D ตาม Ref */}
       <div className="bg-[#12294D] w-full pt-8 pb-8 px-4">
@@ -83,9 +83,8 @@ function LinenDetailContent() {
       {/* Container สำหรับเนื้อหาการ์ดต่างๆ */}
       <div className="max-w-md mx-auto p-4 space-y-4 -mt-2">
         
-        {/* 5. [Card: ภาพ Mockup] พื้นการ์ด #FFFFFF, เส้นแบ่ง #D9E0EA */}
+        {/* 5. [Card: ภาพ Mockup] */}
         <div className="bg-[#FFFFFF] p-5 rounded-xl border border-[#D9E0EA] shadow-sm">
-          {/* หัวข้อสีน้ำเงิน #12294D, เส้นข้างสีส้ม #F26B1D */}
           <h2 className={`text-lg font-bold text-[#12294D] border-l-4 border-[#F26B1D] pl-3 mb-4 ${notoSansThai.className}`}>
             ภาพ Mockup
           </h2>
@@ -97,7 +96,6 @@ function LinenDetailContent() {
                 className="w-full h-full object-contain"
               />
             ) : (
-              // ข้อความรอง #5B6B84
               <span className="text-[#5B6B84] font-semibold text-sm">ไม่มีรูปภาพ Mockup</span>
             )}
           </div>
@@ -109,14 +107,11 @@ function LinenDetailContent() {
             ยอดที่ซื้อเข้า
           </h2>
           <div className="flex items-baseline gap-2 mb-4">
-            {/* ตัวเลขยอดซื้อเข้าสีน้ำเงิน #12294D */}
             <span className="text-5xl font-bold text-[#12294D]">{linen.stock_in || 0}</span>
             <span className="text-[#5B6B84] text-sm">ชิ้น</span>
           </div>
-          {/* เส้นแบ่ง #D9E0EA */}
           <div className="border-t border-[#D9E0EA] pt-4 flex justify-between items-center text-sm">
             <span className="text-[#5B6B84]">สต๊อกคงเหลือตามระบบ</span>
-            {/* ข้อความหลัก #16233B */}
             <span className="text-[#16233B] font-bold text-lg">{linen.stock_remain || 0} ชิ้น</span>
           </div>
         </div>
@@ -126,9 +121,7 @@ function LinenDetailContent() {
           <h2 className={`text-lg font-bold text-[#12294D] border-l-4 border-[#F26B1D] pl-3 mb-4 ${notoSansThai.className}`}>
             โซนที่วาง
           </h2>
-          {/* พื้นการ์ดโซนที่วางสีส้มอ่อน #FFE9DA */}
           <div className="bg-[#FFE9DA] rounded-xl p-4 flex items-center gap-5">
-            {/* ตัวอักษรรหัสโซนสีส้มเข้ม #B84A06 */}
             <span className="text-4xl font-bold text-[#B84A06]">{linen.zone || "A3"}</span>
             <div className="flex flex-col">
               <span className="text-[#16233B] font-bold text-sm">คลัง A • ชั้น 3 • ช่อง 12</span>
@@ -137,18 +130,14 @@ function LinenDetailContent() {
           </div>
         </div>
 
-      </div>
-
-      {/* 8. [ปุ่ม Fixed ด้านล่าง] ไปที่ระบบเบิกจ่ายผ้า */}
-      <div className="fixed bottom-0 left-0 w-full bg-[#FFFFFF] p-4 border-t border-[#D9E0EA] z-10">
-        <div className="max-w-md mx-auto">
-          {/* พื้นปุ่มสีน้ำเงิน #12294D, ตัวอักษรบนพื้นน้ำเงิน #FFFFFF */}
+        {/* 8. [แก้ไข] ยกเลิกรูปแบบ Fixed Sticky นำปุ่มมาใส่ใน Flow หลักของการ์ด เพื่อให้เลื่อนจอไปจนสุดแล้วค่อยเจอปุ่ม */}
+        <div className="pt-4">
           <button className="w-full bg-[#12294D] text-[#FFFFFF] font-bold py-3.5 rounded-xl hover:bg-opacity-90 transition shadow-md text-sm sm:text-base">
             ไปที่ระบบเบิกจ่ายผ้า
           </button>
         </div>
-      </div>
 
+      </div>
     </div>
   );
 }
