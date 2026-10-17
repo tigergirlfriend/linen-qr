@@ -83,7 +83,7 @@ function LinenDetailContent() {
           
           {/* 6. เปลี่ยนฟอนต์ Header เป็น Noto Sans Thai, เพิ่ม truncate ตัดคำยาวๆ ไม่ให้เลย์เอาต์พัง และใส่ title */}
           <h1 
-            className={`text-2xl font-bold text-gray-800 mb-2 truncate ${notoSansThai.className}`}
+            className={`text-2xl font-bold text-gray-800 mb-2 line-clamp-3 ${notoSansThai.className}`}
             title={linen.name}
           >
             {linen.name}
@@ -93,13 +93,13 @@ function LinenDetailContent() {
             <div className="bg-gray-50 p-3 rounded-lg border">
               <p className="text-sm text-gray-500 mb-1">ขนาด</p>
               {/* 7. ใส่ truncate สำหรับขนาดเผื่อชื่อขนาดยาวเกินไป */}
-              <p className="font-semibold text-gray-800 truncate" title={linen.size || "-"}>
+              <p className="font-semibold text-gray-800 mb-2 line-clamp-3" title={linen.size || "-"}>
                 {linen.size || "-"}
               </p>
             </div>
             <div className="bg-gray-50 p-3 rounded-lg border">
-              <p className="text-sm text-gray-500 mb-1 truncate">บรรจุ (ต่อห่อ)</p>
-              <p className="font-semibold text-gray-800 truncate" title={`${linen.qty_per_pack || "-"} ชิ้น`}>
+              <p className="text-sm text-gray-500 mb-2 line-clamp-3">บรรจุ (ต่อห่อ)</p>
+              <p className="font-semibold text-gray-800 mb-2 line-clamp-3" title={`${linen.qty_per_pack || "-"} ชิ้น`}>
                 {linen.qty_per_pack || "-"} ชิ้น
               </p>
             </div>
